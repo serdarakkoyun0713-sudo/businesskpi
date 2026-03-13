@@ -80,10 +80,15 @@ export async function getMonthlyNet(yil: number, ay: number): Promise<MonthlyNet
   return data ?? null;
 }
 
-/** Hedefler tablosu yoksa localStorage ile çalış — sadece client-side */
-export const DEFAULT_GOALS = {
-  siparis_hedef: 100,
-  listing_hedef: 50,
-  ciro_hedef: 500,
-  egzersiz_hedef: 600, // dakika / ay
-};
+/** Kullanıcının hedeflerini çek; yoksa default değerleri döndür */
+export async function getUserGoals() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("user_goals")
+    .select("*")
+    .single();
+
+  const { DEFAULT_GOALS } = await import("@/types/database");
+  if (!data) return { ...DEFAULT_GOALS, id: null, user_id: null, updated_at: null };
+  return data;
+}

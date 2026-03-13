@@ -48,9 +48,36 @@ export type Database = {
         Insert: Omit<Database["public"]["Tables"]["monthly_net"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["monthly_net"]["Insert"]>;
       };
+      user_goals: {
+        Row: {
+          id: string;
+          user_id: string;
+          siparis_hedef: number;
+          listing_hedef: number;
+          ciro_hedef: number;
+          egzersiz_hedef: number;
+          ingilizce_hedef: number;
+          okuma_hedef: number;
+          uyku_hedef: number;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["user_goals"]["Row"], "id" | "updated_at">;
+        Update: Partial<Database["public"]["Tables"]["user_goals"]["Insert"]>;
+      };
     };
   };
 };
 
-export type DailyEntry = Database["public"]["Tables"]["daily_entries"]["Row"];
-export type MonthlyNet = Database["public"]["Tables"]["monthly_net"]["Row"];
+export type DailyEntry  = Database["public"]["Tables"]["daily_entries"]["Row"];
+export type MonthlyNet  = Database["public"]["Tables"]["monthly_net"]["Row"];
+export type UserGoals   = Database["public"]["Tables"]["user_goals"]["Row"];
+
+export const DEFAULT_GOALS: Omit<UserGoals, "id" | "user_id" | "updated_at"> = {
+  siparis_hedef:   100,
+  listing_hedef:    50,
+  ciro_hedef:      500,
+  egzersiz_hedef:  600,
+  ingilizce_hedef: 600,
+  okuma_hedef:      30,
+  uyku_hedef:      7.5,
+};

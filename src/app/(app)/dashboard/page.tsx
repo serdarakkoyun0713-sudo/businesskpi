@@ -12,7 +12,7 @@ import {
   getLast14Days,
   getTodayEntry,
   getYearlyNet,
-  DEFAULT_GOALS,
+  getUserGoals,
 } from "@/lib/queries";
 import { fmtChange, fmtDuration, AYLAR } from "@/lib/utils";
 import type { DailyEntry } from "@/types/database";
@@ -58,12 +58,13 @@ export default async function DashboardPage() {
   const ay = now.getMonth() + 1;
 
   // Paralel veri çekme
-  const [thisMonth, prevMonth, last14, todayEntry, yearlyNet] = await Promise.all([
+  const [thisMonth, prevMonth, last14, todayEntry, yearlyNet, userGoals] = await Promise.all([
     getMonthEntries(yil, ay),
     getPrevMonthEntries(yil, ay),
     getLast14Days(),
     getTodayEntry(),
     getYearlyNet(yil),
+    getUserGoals(),
   ]);
 
   // ── Bu ay hesaplamaları ──
@@ -107,12 +108,12 @@ export default async function DashboardPage() {
     { label: "Gemini",      minutes: sumField(thisMonth, "gemini"),      color: "#0EA5E9", icon: "✨" },
   ].filter((i) => i.minutes > 0);
 
-  // ── Hedef verisi ──
+  // ── Hedef verisi (gerçek DB değerleri) ──
   const goals = [
-    { label: "Aylık Sipariş",  current: totalSiparis,     target: DEFAULT_GOALS.siparis_hedef, format: "num"      as const, accent: "blue"   as const },
-    { label: "Aylık Listing",  current: totalListing,     target: DEFAULT_GOALS.listing_hedef, format: "num"      as const, accent: "purple" as const },
-    { label: "Aylık Ciro",     current: totalCiro,        target: DEFAULT_GOALS.ciro_hedef,    format: "usd"      as const, accent: "green"  as const },
-    { label: "Aylık Egzersiz", current: toplamEgzersiz,   target: DEFAULT_GOALS.egzersiz_hedef,format: "duration" as const, accent: "amber"  as const },
+    { label: "Aylık Sipariş",  current: totalSiparis,   target: userGoals.siparis_hedef,   format: "num"      as const, accent: "blue"   as const },
+    { label: "Aylık Listing",  current: totalListing,   target: userGoals.listing_hedef,   format: "num"      as const, accent: "purple" as const },
+    { label: "Aylık Ciro",     current: totalCiro,      target: userGoals.ciro_hedef,      format: "usd"      as const, accent: "green"  as const },
+    { label: "Aylık Egzersiz", current: toplamEgzersiz, target: userGoals.egzersiz_hedef,  format: "duration" as const, accent: "amber"  as const },
   ];
 
   return (
